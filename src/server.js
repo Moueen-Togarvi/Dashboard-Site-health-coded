@@ -9,7 +9,21 @@ const authRoutes = require('./routes/auth');
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      'https://pms-frontend-zgdy.onrender.com', // Production frontend (update with your actual URL)
+      'http://localhost:3000', // Local development
+      'http://127.0.0.1:3000', // Local development alternative
+      'http://localhost:5500', // Live Server default port
+      'http://127.0.0.1:5500', // Live Server alternative
+      'null', // Opening HTML files directly (file://)
+    ],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
