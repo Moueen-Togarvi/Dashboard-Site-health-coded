@@ -5,8 +5,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Get plan info from URL parameters
   const urlParams = new URLSearchParams(window.location.search);
-  const selectedPlan = urlParams.get('plan') || 'basic';
-  const planName = urlParams.get('planName') || 'Basic Plan';
+  const planParam = urlParams.get('plan');
+  const tierParam = urlParams.get('tier');
+  const planName = urlParams.get('planName') || 'Monthly Subscription';
+
+  // Map pricing page parameters to backend plan types
+  let selectedPlan = 'subscription'; // default
+  if (tierParam === 'outright' || tierParam === 'lifetime') {
+    selectedPlan = 'one-time';
+  } else if (planParam === 'white-label' || planParam === 'whitelabel') {
+    selectedPlan = 'white-label';
+  } else if (tierParam === 'monthly' || tierParam === 'yearly' || planParam === 'subscription') {
+    selectedPlan = 'subscription';
+  }
 
   // Display selected plan if provided
   displaySelectedPlan(planName);
@@ -72,20 +83,16 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       // Save token if returned
-      if (data.token) {
-        saveAuthToken(data.token);
+      if (data.data && data.data.token) {
+        saveAuthToken(data.data.token);
       }
 
       // Show success message
-      showSuccess('Account created successfully! Redirecting to login...');
+      showSuccess('Account created successfully! Redirecting...');
 
-      // Redirect to login or dashboard
+      // Redirect to dashboard
       setTimeout(() => {
-        if (data.token) {
-          window.location.href = '../index.html'; // Redirect to dashboard
-        } else {
-          window.location.href = './Login.html'; // Redirect to login
-        }
+        window.location.href = '../../index.html';
       }, 1500);
     } catch (error) {
       console.error('Signup error:', error);
