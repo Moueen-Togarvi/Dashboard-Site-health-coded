@@ -62,6 +62,10 @@ const userSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
+    productId: {
+      type: String,
+      required: true,
+    },
     isActive: {
       type: Boolean,
       default: true,
@@ -73,8 +77,6 @@ const userSchema = new mongoose.Schema(
 );
 
 // Index for faster queries
-userSchema.index({ email: 1 });
-userSchema.index({ tenantDbName: 1 });
 userSchema.index({ subscriptionStatus: 1, isActive: 1 });
 
 // Hash password before saving

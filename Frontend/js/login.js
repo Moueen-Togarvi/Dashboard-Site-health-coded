@@ -41,14 +41,14 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       // Save token
-      saveAuthToken(data.token);
+      saveAuthToken(data.data.token);
 
       // Show success message
       showSuccess('Login successful! Redirecting...');
 
       // Redirect to dashboard
       setTimeout(() => {
-        window.location.href = '../index.html'; // Change to your dashboard page
+        window.location.href = '/Frontend/comp/dashboard.html';
       }, 1000);
     } catch (error) {
       console.error('Login error:', error);

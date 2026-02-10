@@ -1,9 +1,13 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 require('dotenv').config();
 
 const { connectMasterDB } = require('./config/database');
 const authRoutes = require('./routes/auth');
+const patientsRoutes = require('./routes/patients');
+const appointmentsRoutes = require('./routes/appointments');
+const staffRoutes = require('./routes/staff');
 
 // Initialize Express app
 const app = express();
@@ -27,8 +31,14 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Serve static files from the project root
+app.use(express.static(path.join(__dirname, '../')));
+
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/patients', patientsRoutes);
+app.use('/api/appointments', appointmentsRoutes);
+app.use('/api/staff', staffRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {

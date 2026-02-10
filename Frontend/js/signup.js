@@ -7,9 +7,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const urlParams = new URLSearchParams(window.location.search);
   const selectedPlan = urlParams.get('plan') || 'basic';
   const planName = urlParams.get('planName') || 'Basic Plan';
+  const price = urlParams.get('price');
+  const productId = urlParams.get('product') || 'hospital-pms';
+
+  // Find software name
+  let softwareName = 'Hospital PMS'; // Default
+  if (typeof pricingData !== 'undefined') {
+    const product = pricingData.find((p) => p.id === productId);
+    if (product) softwareName = product.name;
+  }
 
   // Display selected plan if provided
-  displaySelectedPlan(planName);
+  displaySelectedPlan(softwareName, planName, price);
 
   const signupForm = document.querySelector('form');
   const submitButton = signupForm.querySelector('.btn-login');
@@ -61,7 +70,8 @@ document.addEventListener('DOMContentLoaded', () => {
           email,
           password,
           companyName,
-          planType: selectedPlan, // Use plan from URL or default to basic
+          planType: selectedPlan,
+          productId: urlParams.get('product') || 'hospital-pms', // Pass product ID from URL
         }),
       });
 
@@ -71,18 +81,20 @@ document.addEventListener('DOMContentLoaded', () => {
         throw new Error(data.message || 'Registration failed');
       }
 
+      const token = data.data ? data.data.token : null;
+
       // Save token if returned
-      if (data.token) {
-        saveAuthToken(data.token);
+      if (token) {
+        saveAuthToken(token);
       }
 
       // Show success message
-      showSuccess('Account created successfully! Redirecting to login...');
+      showSuccess('Account created successfully! Redirecting...');
 
       // Redirect to login or dashboard
       setTimeout(() => {
-        if (data.token) {
-          window.location.href = '../index.html'; // Redirect to dashboard
+        if (token) {
+          window.location.href = '/Frontend/comp/dashboard.html'; // Redirect to dashboard
         } else {
           window.location.href = './Login.html'; // Redirect to login
         }
@@ -99,13 +111,15 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Display selected plan information
-function displaySelectedPlan(planName) {
+function displaySelectedPlan(softwareName, planName, price) {
   const planInfoElement = document.getElementById('selectedPlanInfo');
-  if (planInfoElement && planName !== 'Basic Plan') {
+  if (planInfoElement) {
     planInfoElement.innerHTML = `
       <div style="background: #EEF2FF; border: 2px solid #4F46E5; border-radius: 12px; padding: 15px; margin-bottom: 20px; text-align: center;">
         <i class="fa-solid fa-check-circle" style="color: #4F46E5; font-size: 20px;"></i>
-        <p style="margin: 8px 0 0 0; color: #374151; font-weight: 600;">Selected Plan: <strong style="color: #4F46E5;">${planName}</strong></p>
+        <p style="margin: 8px 0 0 0; color: #374151; font-weight: 600;">Subscribing to: <strong style="color: #4F46E5;">${softwareName}</strong></p>
+        <p style="margin: 5px 0 0 0; color: #6B7280; font-size: 14px;">Plan: <strong>${planName}</strong></p>
+        ${price ? `<p style="margin: 5px 0 0 0; color: #6B7280; font-size: 14px;">Price: <strong style="color: #4F46E5;">PKR ${price}</strong></p>` : ''}
       </div>
     `;
     planInfoElement.style.display = 'block';
