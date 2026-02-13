@@ -1,43 +1,47 @@
 const express = require('express');
 const router = express.Router();
 const {
-    // Medicine/Inventory
-    getAllItems,
-    getItemById,
-    createItem,
-    updateItem,
-    deleteItem,
-    // Sales
-    recordSale,
-    getAllSales,
-    getSaleById,
-    getDailySales,
-    getSalesByDateRange,
-    // Stock Management
-    addStock,
-    adjustStock,
-    getStockMovements,
-    getLowStockItems,
-    getExpiringItems,
-    // Suppliers
-    createSupplier,
-    getAllSuppliers,
-    updateSupplier,
-    deleteSupplier,
-    // Purchase Orders
-    createPurchaseOrder,
-    receivePurchaseOrder,
-    getAllPurchaseOrders,
-    // Reports & Analytics
-    getDailyReport,
-    getWeeklyReport,
-    getMonthlyReport,
-    getProfitAnalysis,
-    getTopSellingMedicines,
-    getInventoryValue
+  // Medicine/Inventory
+  getAllItems,
+  getItemById,
+  createItem,
+  updateItem,
+  deleteItem,
+  // Sales
+  recordSale,
+  getAllSales,
+  getSaleById,
+  getDailySales,
+  getSalesByDateRange,
+  // Stock Management
+  addStock,
+  adjustStock,
+  getStockMovements,
+  getLowStockItems,
+  getExpiringItems,
+  // Suppliers
+  createSupplier,
+  getAllSuppliers,
+  updateSupplier,
+  deleteSupplier,
+  // Purchase Orders
+  createPurchaseOrder,
+  receivePurchaseOrder,
+  getAllPurchaseOrders,
+  // Reports & Analytics
+  getDailyReport,
+  getWeeklyReport,
+  getMonthlyReport,
+  getProfitAnalysis,
+  getTopSellingMedicines,
+  getInventoryValue,
 } = require('../controllers/pharmacyController');
 const { authenticate } = require('../middleware/authMiddleware');
 const { attachTenantModels } = require('../middleware/tenantMiddleware');
+const {
+  validateInventoryInput,
+  validateObjectIdParam,
+} = require('../middleware/validationMiddleware');
 
 // All routes require authentication and tenant context
 router.use(authenticate);
@@ -45,10 +49,10 @@ router.use(attachTenantModels);
 
 // ==================== MEDICINE/INVENTORY ROUTES ====================
 router.get('/inventory', getAllItems);
-router.get('/inventory/:id', getItemById);
-router.post('/inventory', createItem);
-router.put('/inventory/:id', updateItem);
-router.delete('/inventory/:id', deleteItem);
+router.get('/inventory/:id', validateObjectIdParam, getItemById);
+router.post('/inventory', validateInventoryInput, createItem);
+router.put('/inventory/:id', validateObjectIdParam, validateInventoryInput, updateItem);
+router.delete('/inventory/:id', validateObjectIdParam, deleteItem);
 
 // ==================== SALES ROUTES ====================
 router.post('/sales', recordSale);

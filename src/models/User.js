@@ -76,8 +76,10 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-// Index for faster queries
-userSchema.index({ subscriptionStatus: 1, isActive: 1 });
+// Indexes for faster queries (critical for performance)
+// Note: email and tenantDbName already have indexes via "unique: true" in schema
+// Only add additional indexes here
+userSchema.index({ subscriptionStatus: 1, isActive: 1 }); // Subscription filtering
 
 // Hash password before saving
 userSchema.pre('save', async function (next) {

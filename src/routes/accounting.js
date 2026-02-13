@@ -1,49 +1,54 @@
 const express = require('express');
 const router = express.Router();
 const {
-    // Invoices
-    getAllInvoices,
-    getInvoiceById,
-    createInvoice,
-    updateInvoice,
-    addPaymentToInvoice,
-    getOverdueInvoices,
-    getInvoicesByDateRange,
-    // Payments
-    recordPayment,
-    getAllPayments,
-    getPaymentsByMethod,
-    // Revenue
-    recordRevenue,
-    getRevenueBySource,
-    getRevenueByDateRange,
-    // Expenses
-    getAllExpenses,
-    createExpense,
-    updateExpense,
-    deleteExpense,
-    getExpensesByCategory,
-    getExpensesByDateRange,
-    // Financial Reports
-    getProfitLossStatement,
-    getCashFlowStatement,
-    getBalanceSheet,
-    getIncomeStatement,
-    getDailyFinancialSummary,
-    getMonthlyFinancialSummary,
-    // Tax
-    calculateTax,
-    getTaxReport,
-    recordTaxPayment,
-    // Analytics
-    getRevenueVsExpenses,
-    getTopExpenseCategories,
-    getPaymentMethodDistribution,
-    getAccountsReceivable,
-    getAccountsPayable
+  // Invoices
+  getAllInvoices,
+  getInvoiceById,
+  createInvoice,
+  updateInvoice,
+  addPaymentToInvoice,
+  getOverdueInvoices,
+  getInvoicesByDateRange,
+  // Payments
+  recordPayment,
+  getAllPayments,
+  getPaymentsByMethod,
+  // Revenue
+  recordRevenue,
+  getRevenueBySource,
+  getRevenueByDateRange,
+  // Expenses
+  getAllExpenses,
+  createExpense,
+  updateExpense,
+  deleteExpense,
+  getExpensesByCategory,
+  getExpensesByDateRange,
+  // Financial Reports
+  getProfitLossStatement,
+  getCashFlowStatement,
+  getBalanceSheet,
+  getIncomeStatement,
+  getDailyFinancialSummary,
+  getMonthlyFinancialSummary,
+  // Tax
+  calculateTax,
+  getTaxReport,
+  recordTaxPayment,
+  // Analytics
+  getRevenueVsExpenses,
+  getTopExpenseCategories,
+  getPaymentMethodDistribution,
+  getAccountsReceivable,
+  getAccountsPayable,
 } = require('../controllers/accountingController');
 const { authenticate } = require('../middleware/authMiddleware');
 const { attachTenantModels } = require('../middleware/tenantMiddleware');
+const {
+  validateInvoiceInput,
+  validateExpenseInput,
+  validateObjectIdParam,
+} = require('../middleware/validationMiddleware');
 
 // All routes require authentication and tenant context
 router.use(authenticate);
@@ -53,10 +58,10 @@ router.use(attachTenantModels);
 router.get('/invoices', getAllInvoices);
 router.get('/invoices/overdue', getOverdueInvoices);
 router.get('/invoices/range', getInvoicesByDateRange);
-router.get('/invoices/:id', getInvoiceById);
-router.post('/invoices', createInvoice);
-router.put('/invoices/:id', updateInvoice);
-router.post('/invoices/:id/payment', addPaymentToInvoice);
+router.get('/invoices/:id', validateObjectIdParam, getInvoiceById);
+router.post('/invoices', validateInvoiceInput, createInvoice);
+router.put('/invoices/:id', validateObjectIdParam, validateInvoiceInput, updateInvoice);
+router.post('/invoices/:id/payment', validateObjectIdParam, addPaymentToInvoice);
 
 // ==================== PAYMENT ROUTES ====================
 router.post('/payments', recordPayment);
@@ -70,9 +75,9 @@ router.get('/revenue/range', getRevenueByDateRange);
 
 // ==================== EXPENSE ROUTES ====================
 router.get('/expenses', getAllExpenses);
-router.post('/expenses', createExpense);
-router.put('/expenses/:id', updateExpense);
-router.delete('/expenses/:id', deleteExpense);
+router.post('/expenses', validateExpenseInput, createExpense);
+router.put('/expenses/:id', validateObjectIdParam, validateExpenseInput, updateExpense);
+router.delete('/expenses/:id', validateObjectIdParam, deleteExpense);
 router.get('/expenses/by-category', getExpensesByCategory);
 router.get('/expenses/range', getExpensesByDateRange);
 

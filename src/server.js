@@ -18,7 +18,7 @@ const app = express();
 app.use(
   cors({
     origin: [
-      'https://dashboard-site-qbgb.onrender.com', // Production frontend 
+      'https://dashboard-site-qbgb.onrender.com', // Production frontend
       'http://localhost:3000', // Local development
       'http://127.0.0.1:3000', // Local development alternative
       'http://localhost:5500', // Live Server default port
@@ -33,10 +33,7 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve static files from the project root
-app.use(express.static(path.join(__dirname, '../')));
-
-// Routes
+// Routes (API routes MUST come before static files)
 app.use('/api/auth', authRoutes);
 app.use('/api/patients', patientsRoutes);
 app.use('/api/appointments', appointmentsRoutes);
@@ -52,6 +49,10 @@ app.get('/health', (req, res) => {
     timestamp: new Date().toISOString(),
   });
 });
+
+// Serve static files from Frontend directory only (security: don't expose root)
+// IMPORTANT: This must come AFTER API routes to avoid conflicts
+app.use(express.static(path.join(__dirname, '../Frontend')));
 
 // 404 handler
 app.use((req, res) => {
